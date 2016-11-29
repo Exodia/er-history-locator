@@ -1,6 +1,9 @@
 # er-history-locator
 locator base history api for er framework
 
+## 安装
+edp import er-history-locator
+
 ## 使用方法
 
 ```javascript
