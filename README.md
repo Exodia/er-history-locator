@@ -5,15 +5,14 @@ locator base history api for er framework
 
 ```javascript
 
-import HistoryLocator, {buildERStart} from 'HistoryLocator';
+import {buildERStart} from 'HistoryLocator';
 import er from 'er';
 import router from 'er/router';
 import controller from 'er/controller';
 
 let start = er.start;
 if(typeof window.history.pushState === 'function') {
-  const historyLocator = new HistoryLocator({indexURL: '/', rootPath: '/static/main.html'});
-  start = buildERStart(controller, router, historyLocator);
+  start = buildERStart(controller, router, {indexURL: '/', rootPath: '/static/main.html'});
 }
 
 // 启动 er
