@@ -1,0 +1,43 @@
+{
+    "name": "er-history-locator",
+    "version": "0.0.1",
+    "description": "locator base history api for er framework",
+    "main": "main.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Exodia/er-history-locator.git"
+    },
+    "keywords": [
+        "spa",
+        "history",
+        "locator"
+    ],
+    "maintainers": {
+        "name": "Exodia",
+        "email": "dengxinxin@163.com"
+    },
+    "author": {
+        "name": "Exodia",
+        "email": "dengxinxin@baidu.com"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Exodia/er-history-locator/issues"
+    },
+    "edp": {
+        "dependencies": {
+            "mini-event": "1.x",
+            "er": "3.x"
+        },
+        "wwwroot": "/",
+        "depDir": "dep",
+        "srcDir": ".",
+        "loaderAutoConfig": "js,htm,html,tpl,vm,phtml",
+        "loaderUrl": "http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-6/esl.js",
+        "layout": "v2"
+    },
+    "homepage": "https://github.com/Exodia/er-history-locator#readme"
+}
