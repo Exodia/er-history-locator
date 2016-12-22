@@ -108,7 +108,13 @@ export default class HistoryLocator extends EventTarget {
         // 处理初次进入
         if (firstTime) {
             let initURL = location.pathname.slice(this.getConfig().rootPath.length);
-            this[ATTR].startupTimer = setTimeout(() => this.redirect(initURL), 0);
+            let options = {};
+            // hash兼容的情况下，hash优先
+            if (this[ATTR].hashCompatible && location.hash) {
+                initURL = location.hash.slice(1);
+                options = {replace: true};
+            }
+            this[ATTR].startupTimer = setTimeout(() => this.redirect(initURL, options), 0);
         }
     }
 
