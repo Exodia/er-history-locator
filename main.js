@@ -87,8 +87,9 @@ export default class HistoryLocator extends EventTarget {
                 let referrer = self[ATTR].currentLocation;
                 self[ATTR].currentLocation = url;
                 if (url && referrer !== url) {
-                    self.fire('redirect', {url, referrer});
-                    self.getEventBus().fire('redirect', {url, referrer});
+                    let redirectInfo = {url: sliceSearch(url), referrer: referrer};
+                    self.fire('redirect', redirectInfo);
+                    self.getEventBus().fire('redirect', {...redirectInfo});
                 }
             }
         };
@@ -114,6 +115,7 @@ export default class HistoryLocator extends EventTarget {
                 initURL = location.hash.slice(1);
                 options = {replace: true};
             }
+            initURL += location.search;
             this[ATTR].startupTimer = setTimeout(() => this.redirect(initURL, options), 0);
         }
     }
@@ -166,6 +168,7 @@ export default class HistoryLocator extends EventTarget {
         let isLocationChanged = this[UPDATE_URL](url, options);
         let shouldPerformRedirect = isLocationChanged || options.force;
         if (shouldPerformRedirect) {
+            let redirectInfo = {url: sliceSearch(url), referrer: referrer};
             if (!options.silent) {
                 /**
                  * URL跳转时触发
@@ -174,10 +177,10 @@ export default class HistoryLocator extends EventTarget {
                  * @param {Object} e 事件对象
                  * @param {string} e.url 当前的URL
                  */
-                this.fire('redirect', {url, referrer});
+                this.fire('redirect', {...redirectInfo});
             }
 
-            this.getEventBus().fire('redirect', {url, referrer});
+            this.getEventBus().fire('redirect', redirectInfo);
         }
 
         return shouldPerformRedirect;
@@ -243,4 +246,9 @@ export function buildERStart(erController, erRouter, historyConfig) {
         erRouter.start();
         historyLocator.start();
     };
+}
+
+// 切割 url 查询参数
+function sliceSearch(url) {
+    return url.includes('?') ? url.slice(0, url.indexOf('?')) : url;
 }
