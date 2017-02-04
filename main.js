@@ -78,7 +78,7 @@ export default class HistoryLocator extends EventTarget {
             // ie非edge系列不支持newURL属性
             hijackHashRedirect({newURL = location.hash}) {
                 self.redirect(
-                    newURL.includes('#') ? newURL.slice(newURL.indexOf('#') + 1) : '',
+                    newURL.slice(newURL.indexOf('#') + 1),
                     {replace: true}
                 );
             },
@@ -87,8 +87,15 @@ export default class HistoryLocator extends EventTarget {
                 let referrer = self[ATTR].currentLocation;
                 self[ATTR].currentLocation = url;
                 if (url && referrer !== url) {
-                    self.fire('redirect', {url, referrer});
-                    self.getEventBus().fire('redirect', {url, referrer});
+                    let redirectInfo = {url: sliceSearch(url), referrer: referrer};
+                    self.fire('redirect', redirectInfo);
+                    self.getEventBus().fire(
+                        'redirect',
+                        {
+                            ...redirectInfo,
+                            options: {}
+                        }
+                    );
                 }
             }
         };
@@ -146,6 +153,7 @@ export default class HistoryLocator extends EventTarget {
 
         // 未给定url时，指向起始页
         if (!url || url === '/') {
+
             url = this[ATTR].config.indexURL;
         }
 
@@ -166,6 +174,7 @@ export default class HistoryLocator extends EventTarget {
         let isLocationChanged = this[UPDATE_URL](url, options);
         let shouldPerformRedirect = isLocationChanged || options.force;
         if (shouldPerformRedirect) {
+            let redirectInfo = {url: sliceSearch(url), referrer: referrer};
             if (!options.silent) {
                 /**
                  * URL跳转时触发
@@ -174,10 +183,16 @@ export default class HistoryLocator extends EventTarget {
                  * @param {Object} e 事件对象
                  * @param {string} e.url 当前的URL
                  */
-                this.fire('redirect', {url, referrer});
+                this.fire('redirect', redirectInfo);
             }
 
-            this.getEventBus().fire('redirect', {url, referrer});
+            this.getEventBus().fire(
+                'redirect',
+                {
+                    ...redirectInfo,
+                    options: options
+                }
+            );
         }
 
         return shouldPerformRedirect;
@@ -204,6 +219,9 @@ export default class HistoryLocator extends EventTarget {
      * @return {boolean} 如果地址有过变更则返回true
      */
     [UPDATE_URL](url, options = {}) {
+        if (this[ATTR].hashCompatible) {
+            url += location.search;
+        }
         let changed = this[ATTR].currentLocation !== url;
         let method = options.replace ? 'replaceState' : 'pushState';
         // 存储当前信息
@@ -243,4 +261,9 @@ export function buildERStart(erController, erRouter, historyConfig) {
         erRouter.start();
         historyLocator.start();
     };
+}
+
+// 切割 url 查询参数
+function sliceSearch(url) {
+    return url.includes('?') ? url.slice(0, url.indexOf('?')) : url;
 }
