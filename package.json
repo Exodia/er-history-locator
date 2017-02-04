@@ -1,6 +1,6 @@
 {
     "name": "er-history-locator",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "locator base history api for er framework",
     "main": "main.js",
     "scripts": {
