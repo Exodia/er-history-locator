@@ -83,6 +83,11 @@ export default class HistoryLocator extends EventTarget {
                 );
             },
             onPopstate({state}) {
+                // hash兼容且无url的情况下，认为是hashchange导致的，直接放走让hijackHashRedirect来搞
+                if (self[ATTR].hashCompatible && !state) {
+                    return;
+                }
+
                 let url = state ? state.url : undefined;
                 let referrer = self[ATTR].currentLocation;
                 self[ATTR].currentLocation = url;
